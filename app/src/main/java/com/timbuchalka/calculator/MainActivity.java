@@ -42,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         Button buttonMultiply = (Button) findViewById(R.id.buttonMultiply);
         Button buttonMinus = (Button) findViewById(R.id.buttonMinus);
         Button buttonPlus = (Button) findViewById(R.id.buttonPlus);
+
+        Button buttonNeg = (Button) findViewById(R.id.buttonNeg);
+        Button buttonClear = (Button) findViewById(R.id.buttonClear);
+
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,6 +87,51 @@ public class MainActivity extends AppCompatActivity {
         buttonMultiply.setOnClickListener(opListener);
         buttonMinus.setOnClickListener(opListener);
         buttonPlus.setOnClickListener(opListener);
+
+        buttonNeg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = newNumber.getText().toString();
+                if (value.length() == 0)
+                    newNumber.setText("-");
+                else {
+                    try {
+                        Double doubleValue = Double.valueOf(value);
+                        doubleValue *= -1;
+                        newNumber.setText(doubleValue.toString());
+                    } catch (NumberFormatException ex) {
+                        newNumber.setText("");
+                    }
+                }
+            }
+        });
+
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pendingOperation = "=";
+                displayOperation.setText(pendingOperation);
+                newNumber.setText("");
+                result.setText("");
+                operand1 = null;
+            }
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (operand1 != null)
+            outState.putDouble("operand", operand1);
+        outState.putString("pendingOperation", pendingOperation);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        operand1 = savedInstanceState.getDouble("operand");
+        pendingOperation = savedInstanceState.getString("pendingOperation");
+        displayOperation.setText(pendingOperation);
     }
 
     private void performOperation(Double value, String operation) {
@@ -119,19 +168,4 @@ public class MainActivity extends AppCompatActivity {
         newNumber.setText("");
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (operand1 != null)
-            outState.putDouble("operand",operand1);
-        outState.putString("pendingOperation",pendingOperation);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        operand1 = savedInstanceState.getDouble("operand");
-        pendingOperation = savedInstanceState.getString("pendingOperation");
-        displayOperation.setText(pendingOperation);
-    }
 }
