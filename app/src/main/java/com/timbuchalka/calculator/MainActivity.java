@@ -118,4 +118,20 @@ public class MainActivity extends AppCompatActivity {
         result.setText(operand1.toString());
         newNumber.setText("");
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (operand1 != null)
+            outState.putDouble("operand",operand1);
+        outState.putString("pendingOperation",pendingOperation);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        operand1 = savedInstanceState.getDouble("operand");
+        pendingOperation = savedInstanceState.getString("pendingOperation");
+        displayOperation.setText(pendingOperation);
+    }
 }
